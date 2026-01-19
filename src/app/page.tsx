@@ -1,110 +1,88 @@
-import {
-	SignedIn,
-	SignedOut,
-	SignInButton,
-	SignUpButton,
-	UserButton,
-} from "@clerk/nextjs";
+import { SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { LatestPost } from "~/app/_components/post";
-import { api, HydrateClient } from "~/trpc/server";
-
-export default async function Home() {
-	const hello = await api.post.hello({ text: "from tRPC" });
+export default async function LandingPage() {
 	const { userId } = await auth();
 
+	// If user is signed in, redirect to dashboard
 	if (userId) {
-		void api.post.getLatest.prefetch();
+		redirect("/home");
 	}
 
 	return (
-		<HydrateClient>
-			<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-				<div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-					<div className="absolute top-4 right-4">
-						<SignedIn>
-							<UserButton afterSignOutUrl="/" />
-						</SignedIn>
+		<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white">
+			<div className="container flex flex-col items-center justify-center gap-8 px-4 py-16 text-center">
+				{/* Logo/Brand */}
+				<div className="flex items-center gap-3">
+					<div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-3xl text-white">
+						+
 					</div>
-
-					<h1 className="font-extrabold text-5xl tracking-tight sm:text-[5rem]">
-						Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+					<h1 className="font-bold text-4xl text-gray-900">
+						AI Health Assistant
 					</h1>
-					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-						<Link
-							className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-							href="https://create.t3.gg/en/usage/first-steps"
-							target="_blank"
-						>
-							<h3 className="font-bold text-2xl">First Steps →</h3>
-							<div className="text-lg">
-								Just the basics - Everything you need to know to set up your
-								database and authentication.
-							</div>
-						</Link>
-						<Link
-							className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-							href="https://create.t3.gg/en/introduction"
-							target="_blank"
-						>
-							<h3 className="font-bold text-2xl">Documentation →</h3>
-							<div className="text-lg">
-								Learn more about Create T3 App, the libraries it uses, and how
-								to deploy it.
-							</div>
-						</Link>
-					</div>
-					<div className="flex flex-col items-center gap-2">
-						<p className="text-2xl text-white">
-							{hello ? hello.greeting : "Loading tRPC query..."}
+				</div>
+
+				{/* Description */}
+				<p className="max-w-md text-gray-600 text-lg">
+					Get health guidance from our AI assistant and book appointments at
+					nearby hospitals - all in one place.
+				</p>
+
+				{/* Auth Section */}
+				<SignedOut>
+					<div className="flex flex-col items-center gap-6">
+						<p className="font-medium text-gray-800 text-xl">
+							Please login to continue
 						</p>
-
-						<div className="flex flex-col items-center justify-center gap-4">
-							<SignedIn>
-								<p className="text-center text-2xl text-white">
-									You are signed in!
-								</p>
-								<Link
-									className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-									href="/profile"
+						<div className="flex gap-4">
+							<SignInButton mode="modal">
+								<button
+									className="rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-700"
+									type="button"
 								>
-									View Profile
-								</Link>
-							</SignedIn>
-
-							<SignedOut>
-								<p className="text-center text-2xl text-white">
-									Sign in to get started
-								</p>
-								<div className="flex gap-4">
-									<SignInButton mode="modal">
-										<button
-											className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-											type="button"
-										>
-											Sign In
-										</button>
-									</SignInButton>
-									<SignUpButton mode="modal">
-										<button
-											className="rounded-full bg-purple-600 px-10 py-3 font-semibold no-underline transition hover:bg-purple-700"
-											type="button"
-										>
-											Sign Up
-										</button>
-									</SignUpButton>
-								</div>
-							</SignedOut>
+									Sign In
+								</button>
+							</SignInButton>
+							<SignUpButton mode="modal">
+								<button
+									className="rounded-lg border-2 border-blue-600 px-8 py-3 font-semibold text-blue-600 transition hover:bg-blue-50"
+									type="button"
+								>
+									Sign Up
+								</button>
+							</SignUpButton>
 						</div>
 					</div>
+				</SignedOut>
 
-					<SignedIn>
-						<LatestPost />
-					</SignedIn>
+				{/* Features Preview */}
+				<div className="mt-8 grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-3">
+					<div className="rounded-xl bg-white p-6 shadow-md">
+						<div className="mb-3 text-3xl">💬</div>
+						<h3 className="mb-2 font-semibold text-gray-900">AI Chatbot</h3>
+						<p className="text-gray-600 text-sm">
+							Get instant health guidance from our AI assistant
+						</p>
+					</div>
+					<div className="rounded-xl bg-white p-6 shadow-md">
+						<div className="mb-3 text-3xl">🏥</div>
+						<h3 className="mb-2 font-semibold text-gray-900">Find Hospitals</h3>
+						<p className="text-gray-600 text-sm">
+							Browse nearby hospitals and their details
+						</p>
+					</div>
+					<div className="rounded-xl bg-white p-6 shadow-md">
+						<div className="mb-3 text-3xl">📅</div>
+						<h3 className="mb-2 font-semibold text-gray-900">
+							Book Appointments
+						</h3>
+						<p className="text-gray-600 text-sm">
+							Schedule visits with doctors easily
+						</p>
+					</div>
 				</div>
-			</main>
-		</HydrateClient>
+			</div>
+		</main>
 	);
 }

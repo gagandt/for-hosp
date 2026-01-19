@@ -13,6 +13,8 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
 			.default("development"),
+		OPENAI_API_KEY: z.string(),
+		ADMIN_EMAIL: z.string().email(),
 	},
 
 	/**
@@ -35,6 +37,8 @@ export const env = createEnv({
 		DATABASE_URL: process.env.DATABASE_URL,
 		DATABASE_TOKEN: process.env.DATABASE_TOKEN,
 		NODE_ENV: process.env.NODE_ENV,
+		OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+		ADMIN_EMAIL: process.env.ADMIN_EMAIL,
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
 			process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 		NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
